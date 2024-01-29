@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers, createUser, updateUser, deleteUser } from './redux/userSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.users.data);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  const handleCreateUser = () => {
+    const newUser = {
+      name: 'New User',
+      email: 'newuser@example.com',
+      // Add other properties as needed
+    };
+    dispatch(createUser(newUser));
+  };
+
+  const handleUpdateUser = (id) => {
+    const updatedUserData = {
+      name: 'Updated User',
+      email: 'updateduser@example.com',
+      // Add other properties as needed
+    };
+    dispatch(updateUser({ id, userData: updatedUserData }));
+  };
+
+  const handleDeleteUser = (id) => {
+    dispatch(deleteUser(id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Users</h1>
+      <button onClick={handleCreateUser}>Create User</button>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+            <button onClick={() => handleUpdateUser(user.id)}>Update</button>
+            <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
